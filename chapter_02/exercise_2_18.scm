@@ -4,8 +4,6 @@
 
 (car (last-pair l))
 
-(cdr (last-pair (cdr (list 1))))
-
 (null? (cdr (list 1)))
 
 (define (append l1 l2)
