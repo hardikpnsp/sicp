@@ -1,0 +1,11 @@
+(define (for-each proc l)
+  (define (apply l)
+    (proc (car l))
+    (iter (cdr l)))
+  (define (iter l)
+    (cond ((not (null? l)) (apply l))
+          (else true)))
+  (iter l))
+
+(for-each (lambda (x) (newline) (display x))
+          (list 1 2 3 4 5))
