@@ -126,3 +126,23 @@ d (u^n) / dx = n * u^(n-1) * du/dx
   (cond ((=number? exp 0) 0)
         ((=number? exp 1) base)
         (else (list '** base exp))))
+
+
+
+;; Exercise 2.57
+
+(define (augend s)
+  (if (null? (cdddr s))
+      (caddr s)
+      (append (list '+) (cddr s))))
+  
+(augend (list + 'x 'y 'z))
+
+(define (multiplicand m)
+  (if (null? (cdddr m))
+      (caddr m)
+      (append (list '*) (cddr m))))
+
+(multiplicand (list '* 'x 'y 'z 'a 'b 'c))
+
+(deriv '(* x y (+ x 3)) 'x)
