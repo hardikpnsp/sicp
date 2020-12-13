@@ -146,3 +146,111 @@ d (u^n) / dx = n * u^(n-1) * du/dx
 (multiplicand (list '* 'x 'y 'z 'a 'b 'c))
 
 (deriv '(* x y (+ x 3)) 'x)
+
+
+;; Exercise 2.58
+;; a. Infix notation: assuming that only two arguments for each operators
+
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp)
+         (if (same-variable? exp var) 1 0))
+        ((sum? exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))
+        ((product? exp)
+         (make-sum
+          (make-product (multiplier exp)
+                        (deriv (multiplicand exp) var))
+          (make-product (multiplicand exp)
+                        (deriv (multiplier exp) var))))
+        (else
+         (error "unknown expression type -- DERIV" exp))))
+
+(define (sum? exp)
+  (and (pair? exp) (eq? (cadr exp) '+)))
+
+(sum? '(x + y))
+
+(define (product? exp)
+  (and (pair? exp) (eq? (cadr exp) '*)))
+
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2)) (+ a1 a2))
+        (else (list a1 '+ a2))))
+
+(make-sum 'x 'y)
+
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (list m1 '* m2))))
+
+(define (addend exp)
+  (car exp))
+
+(define (augend exp)
+  (caddr exp))
+
+(addend '(x + y))
+(augend '(x + y))
+
+(define (multiplicand exp)
+  (caddr exp))
+
+(define (multiplier exp)
+  (car exp))
+
+(deriv '(x + (3 * (x + (y + 2)))) 'x)
+
+;; b. drop unnecessary parentheses and assume multiplication is done before sum
+;; note: only does multiplication and sum
+
+(define (sum? exp)
+  (and (pair? exp)
+       (memq '+ exp)))
+
+(cdr (memq '+ '(x + y)))
+
+(define (augend exp)
+  (let ((rhs (cdr (memq '+ exp))))
+    (cond ((null? rhs)
+           (error "no RHS of + found"))
+          ((and (pair? rhs)
+                (null? (cdr rhs)))
+           (car rhs))
+          (else rhs))))
+
+(define (addend exp)
+  (define (iter l result)
+    (if (eq? (car l) '+)
+        result
+        (iter (cdr l) (cons (car l) result))))
+  (let ((lhs (iter exp '())))
+    (if (null? (cdr lhs))
+        (car lhs)
+        (reverse lhs))))
+
+(define (multiplicand exp)
+  (let ((rhs (cdr (memq '* exp))))
+    (cond ((null? rhs)
+           (error "no RHS of * found"))
+          ((and (pair? rhs)
+                (null? (cdr rhs)))
+           (car rhs))
+          (else rhs))))
+           
+
+(augend '(x * y + z))
+(augend '(x + y * z))
+
+(addend '(x * y + z))
+(addend '(x + y + z))
+
+(deriv '(x + 3 * (x + y + 2)) 'x)
+
+(deriv '((x * x) + (x * y + x * 6 * (x + 7))) 'x)
