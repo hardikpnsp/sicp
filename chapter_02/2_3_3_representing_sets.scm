@@ -98,3 +98,90 @@
 
 (union-set (list 1 3 5) (list 2 4 6))
 (union-set (list 2 4 6) (list 1 2 3 4 5))
+
+#| Sets as binary trees |#
+
+(define (entry tree) (car tree))
+
+(define (left-branch tree) (cadr tree))
+
+(define (right-branch tree) (caddr tree))
+
+(define (make-tree entry left right)
+  (list entry left right))
+
+(define (element-of-tree? x set)
+  (cond ((null? set) false)
+        ((= x (entry set)) true)
+        ((< x (entry set))
+         (element-of-set? x (left-branch set)))
+        ((> x (entry set))
+         (element-of-set? x (right-branch set)))))
+
+(define (adjoin-set x set)
+  (cond ((null? set) (make-tree x '() '()))
+        ((= x (entry set)) set)
+        ((< x (entry set))
+         (make-tree (entry set)
+                    (adjoin-set x (left-branch set))
+                    (right-branch set)))
+        ((> x (entry set))
+         (make-tree (entry set)
+                    (left-branch set)
+                    (adjoin-set x (right-branch set))))))
+
+;; Exercise 2.63
+
+#|
+     7
+    / \
+   3   9
+  / \   \
+ 1   5   11
+
+|#
+
+(define t (make-tree 7
+                     (make-tree 3
+                                (make-tree 1 '() '())
+                                (make-tree 5 '() '()))
+                     (make-tree 9
+                                '()
+                                (make-tree 11 '() '()))))
+
+(display t)
+
+(define (tree->list-1 tree)
+  (if (null? tree)
+      '()
+      (append (tree->list-1 (left-branch tree))
+              (cons (entry tree)
+                    (tree->list-1 (right-branch tree))))))
+
+(tree->list-1 t)
+;; (1 3 5 7 9 11)
+
+(define (tree->list-2 tree)
+  (define (copy-to-list tree result-list)
+    (if (null? tree)
+        result-list
+        (copy-to-list (left-branch tree)
+                      (cons (entry tree)
+                            (copy-to-list (right-branch tree)
+                                          result-list)))))
+  (copy-to-list tree '()))
+
+(tree->list-2 t)
+;; (1 3 5 7 9 11)
+
+#|
+;; a.
+ Do the two procedure produce same results? YES, both are in-order traversal
+
+;; b.
+Do the two procedures have the same order of growth? NO
+
+-> 1 uses append which takes O(N) at each level amounting to O(NlogN)
+-> 2 has O(N) complexity 
+
+|#
