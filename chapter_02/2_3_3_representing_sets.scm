@@ -247,3 +247,41 @@ Time complexity: O(N)
 At each step there are N/2 + N/2 = N items processed.
 
 |#
+
+;; Exercise 2.65 union-set and intersection-set implementation
+
+(define (union-set set1 set2)
+  (define (merge-list l1 l2)
+    (cond ((null? l1) l2)
+          ((null? l2) l1)
+          ((= (car l1) (car l2))
+           (cons (car l1)
+                 (merge-list (cdr l1) (cdr l2))))
+          ((< (car l1) (car l2))
+           (cons (car l1)
+                 (merge-list (cdr l1) l2)))
+          (else (cons (car l2)
+                      (merge-list l1 (cdr l2))))))
+  (list->tree (merge-list (tree->list-2 set1)
+                          (tree->list-2 set2))))
+
+(tree->list-1 (union-set (list->tree (list 1 3 5 7 9 11))
+                         (list->tree (list 2 4 6 8 10))))
+
+
+(define (intersection-set set1 set2)
+  (define (merge-list l1 l2)
+    (cond ((or (null? l1) (null? l2))
+           '())
+          ((= (car l1) (car l2))
+           (cons (car l1)
+                 (merge-list (cdr l1) (cdr l2))))
+          ((< (car l1) (car l2))
+           (merge-list (cdr l1) l2))
+          (else (merge-list l1 (cdr l2)))))
+  (list->tree (merge-list (tree->list-2 set1)
+                          (tree->list-2 set2))))
+
+(tree->list-1 (intersection-set (list->tree (list 1 3 5 6 7 9 10))
+                                (list->tree (list 2 4 5 6 7 8 10))))
+               
