@@ -285,3 +285,15 @@ At each step there are N/2 + N/2 = N items processed.
 (tree->list-1 (intersection-set (list->tree (list 1 3 5 6 7 9 10))
                                 (list->tree (list 2 4 5 6 7 8 10))))
                
+;; Exercise 2.66: lookup
+
+(define (lookup key tree)
+  (cond ((null? tree) false)
+        ((< key (entry tree))
+         (lookup key (left-branch tree)))
+        ((> key (entry tree))
+         (lookup key (right-branch tree)))
+        (else true)))
+
+(lookup 1 (list->tree (list 1 3 5 7 9 11)))
+(lookup 2 (list->tree (list 1 3 5 7 9 11)))
