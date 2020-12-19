@@ -59,7 +59,7 @@
                                (cadr pair))
                     (make-leaf-set (cdr pairs))))))
 
-;; Exercise 2.67
+;; Exercise 2.67 decode the message with given tree
 
 (define sample-tree
   (make-code-tree (make-leaf 'A 4)
@@ -72,3 +72,28 @@
 
 (decode sample-message sample-tree)
 
+;; Exercise 2.68 encode message with given tree
+
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+(define (encode-symbol letter tree)
+  (if (leaf? tree)
+      '()
+      (cond ((memq letter (symbols (left-branch tree)))
+             (cons 0
+                   (encode-symbol letter (left-branch tree))))
+            ((memq letter (symbols (right-branch tree)))
+             (cons 1
+                   (encode-symbol letter (right-branch tree))))
+            (else (error "bad symbol -- ENCODE-SYMBOL" letter)))))
+
+(encode-symbol 'B sample-tree)
+
+(equal? (encode (decode sample-message
+                        sample-tree)
+                sample-tree)
+        sample-message)
