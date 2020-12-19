@@ -97,3 +97,22 @@
                         sample-tree)
                 sample-tree)
         sample-message)
+
+;; Exercise 2.69
+
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+(define (successive-merge leaves)
+  (let ((left (car leaves)))
+    (if (null? (cdr leaves))
+        left
+        (let ((right (cadr leaves)))
+          (successive-merge (adjoin-set (make-code-tree left right)
+                                        (cddr leaves)))))))
+
+(define pairs (list '(A 8) '(B 3) '(C 1) '(D 1) '(E 1) '(F 1) '(G 1) '(H 1)))
+
+(make-leaf-set pairs)
+
+(successive-merge (make-leaf-set pairs))
