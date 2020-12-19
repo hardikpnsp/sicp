@@ -98,7 +98,7 @@
                 sample-tree)
         sample-message)
 
-;; Exercise 2.69
+;; Exercise 2.69: Generate huffman tree
 
 (define (generate-huffman-tree pairs)
   (successive-merge (make-leaf-set pairs)))
@@ -116,3 +116,20 @@
 (make-leaf-set pairs)
 
 (successive-merge (make-leaf-set pairs))
+
+;; Exercise 2.70
+
+(define rock-song-tree (generate-huffman-tree (list '(A 2) '(NA 16) '(BOOM 1) '(SHA 3) '(GET 2) '(YIP 9) '(JOB 2) '(WHA 1))))
+
+(define rock-song '(get a job
+                        sha na na na na na na na na
+                        get a job
+                        sha na na na na na na na na
+                        wha yip yip yip yip yip yip yip yip yip
+                        sha boom))
+(encode rock-song rock-song-tree)
+(decode (encode rock-song rock-song-tree) rock-song-tree)
+(length (encode rock-song rock-song-tree))
+;; 84 bits
+
+;; if we use fixed lenght we will need 3 * 36 = 108 bits
