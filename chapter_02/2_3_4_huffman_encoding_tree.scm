@@ -133,3 +133,25 @@
 ;; 84 bits
 
 ;; if we use fixed lenght we will need 3 * 36 = 108 bits
+
+;; Exercise 2.71
+
+(generate-huffman-tree (list '(A 16) '(B 8) '(C 4) '(D 2) '(E 1)))
+
+#| 
+- 1 bit for the most frequent charecter
+- n-1 bit for the least frequent
+
+tree sketch 
+
+            root
+          /      \
+most freq        node
+                /    \
+second most freq      node
+                     /    \
+      third most freq      node
+                          /    \
+                         .      ...
+
+|#
