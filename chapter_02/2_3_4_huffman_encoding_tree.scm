@@ -155,3 +155,11 @@ second most freq      node
                          .      ...
 
 |#
+
+;; Exercise 2.72
+
+
+#|
+
+- Time Complexity seems N * log N at first as at each level -> there are N comparison in worst case and on average there are log N levels in a huffman tree but it depends on the tree.
+- Time complexity for the case in Exercise 2.71 will be N^2 because there are N-1 levels as its an imbalanced tree.
