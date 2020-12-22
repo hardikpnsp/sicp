@@ -79,3 +79,48 @@ example:
 (put '(**) 'deriv deriv-exponents) 
 
 |#
+
+;; Exercise 2.74:  Insatiable Enterprises
+
+#|
+
+- Each division contains a file with set of records keyed on employee names
+- structure of set varies from division to division
+- each record is itself a set
+- - - (<identifier> <value>)
+- Example data
+((employee_two_name (address address_value) (salary 100000)) 
+ (employee_one_name (address address_value) (salary 100000)))
+
+|#
+
+;; a. get-record
+
+(define (get-record employee tagged-division-file)
+  ((get 'get-record (type-tag tagged-division-file))
+   employee
+   (contents tagged-division-file)))
+
+;; each division file should contain its tag so that we can fetch appropriate method for get-record via dynamic dispatch
+
+;; b. get-salary
+
+(define (get-salary tagged-record)
+  ((get 'get-salary (tag-type tagged-record))
+   (contents tag-record)))
+
+;; c. find-employee-record
+
+(define (find-employee-record employee division-files-list)
+  (if (null? difision-file-list)
+      #f
+      (let ((tagged-file (car division-files-list)))
+        (let ((data (get-record employee tagged-file)))
+          (if (null? data)
+              (find-employee-record employee (cdr division-files-list))
+              data)))))
+
+;; d. adding data to lookup table
+
+(put 'get-record 'new-company-tag-for-division-file method-get-record)
+(put 'get-salary 'new-company-tag-for-division-file method-get-salary)
