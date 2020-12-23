@@ -124,3 +124,16 @@ example:
 
 (put 'get-record 'new-company-tag-for-division-file method-get-record)
 (put 'get-salary 'new-company-tag-for-division-file method-get-salary)
+
+;; Exercise 2.75: make-from-mag-ang in message passing style
+
+(define (make-from-mag-ang x y)
+  (define (dispatch op)
+    (cond ((eq? op 'magnitude) x)
+          ((eq? op 'angle) y)
+          ((eq? op 'real-part)
+           (* x (cos y)))
+          ((eq? op 'imag-part)
+           (* x (sin y)))
+          (else (error "Unknown op --- MAKE-FROM-MAG-ANG"))))
+  dispatch)
