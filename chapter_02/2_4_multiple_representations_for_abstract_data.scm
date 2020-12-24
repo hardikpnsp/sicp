@@ -137,3 +137,39 @@ example:
            (* x (sin y)))
           (else (error "Unknown op --- MAKE-FROM-MAG-ANG"))))
   dispatch)
+
+;; Exercise 2.76: large system with generic operations
+
+#|
+
+- Three strategies
+
+1. generic operations with explicit dispatch
+
+## Changes that must be made for adding new type
+- Every individual implementation has to handle new type on their own.
+
+## Changes that must be made for adding new operation
+- adding new operation can be done without altering existing code
+- have to implement one new method for the new operation which handles all type scenario for the new op
+
+2. data-directed style
+
+## Changes that must be made for adding new type
+- New type and its handling method must be intalled in the dispatch table 
+- have to add one more column in the dispatch table
+
+## Changes that must be made for adding new operation
+- Adding new operation can be done without changing existing code
+- have to add a row in the dispatch table and implementation method for each type
+
+3. message-passing style 
+
+## Changes that must be made for adding new type
+- adding new type can be done without changing existing code
+
+## Changes that must be made for adding new operation
+- Adding new operation means we have to change each dispatch method to handle the new operation
+
+
+|#
