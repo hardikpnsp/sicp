@@ -57,7 +57,7 @@ z -> ('complex ('rectangular (real-part imaginary-part)))
         (else (error "Bad tagged datum -- TYPE-TAG" datum))))
 
 (define (contents datum)
-  (cond ((pari? datum) (cdr datum))
+  (cond ((pair? datum) (cdr datum))
         ((number? datum) datum)
         (else (error "Bad tagged datum -- CONTENTS" datum))))
 
@@ -65,4 +65,28 @@ z -> ('complex ('rectangular (real-part imaginary-part)))
   (if (eq? type-tag 'scheme-number)
       contents
       (cons type-tag contents)))
+
+;; Exercise 2.79: equ? for comparison
+
+(define (install-scheme-number-package)
+  ;; ... 
+  (put 'equ? '(scheme-number scheme-number) =)
+  'done)
+
+(define (install-rational-number-package)
+  ;; ...
+  (define (equ? x y)
+    (= (* (numer x) (denom y)) (* (numer y) (denom x))))
+  (put 'equ? '(rational-number rational-number) equ?)
+  'done)
+
+(define (install-complex-number-packate)
+  ;; ...
+  (define (equ? x y)
+    (and (= (real-part x) (real-part y)) (= (imag-part x) (imag-part y))))
+  (put 'equ? '(complex complex) equ?)
+  'done)
+
+(define (equ? x y)
+  (apply-generic 'equ? x y))
 
