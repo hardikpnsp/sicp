@@ -67,10 +67,12 @@ z -> ('complex ('rectangular (real-part imaginary-part)))
       (cons type-tag contents)))
 
 ;; Exercise 2.79: equ? for comparison
+;; Exercise 2.80: =zero?
 
 (define (install-scheme-number-package)
   ;; ... 
   (put 'equ? '(scheme-number scheme-number) =)
+  (put '=zero? '(scheme-number) (lambda (x) (= x 0)))
   'done)
 
 (define (install-rational-number-package)
@@ -78,6 +80,7 @@ z -> ('complex ('rectangular (real-part imaginary-part)))
   (define (equ? x y)
     (= (* (numer x) (denom y)) (* (numer y) (denom x))))
   (put 'equ? '(rational-number rational-number) equ?)
+  (put '=zero? '(rational-number) (lambda (x) (= 0 (numer x))))
   'done)
 
 (define (install-complex-number-packate)
@@ -85,6 +88,9 @@ z -> ('complex ('rectangular (real-part imaginary-part)))
   (define (equ? x y)
     (and (= (real-part x) (real-part y)) (= (imag-part x) (imag-part y))))
   (put 'equ? '(complex complex) equ?)
+  (define (=zero? x)
+    (equ? x (make-from-real-imag 0 0)))
+  (put 'zero? '(complex) =zero?)
   'done)
 
 (define (equ? x y)
