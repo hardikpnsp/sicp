@@ -92,4 +92,45 @@ trace:
                              (error "No method for these types"
                                     (list op type-tags))))))
                 (error "No method for these types"
-                       (list op type-tags)))))))
+                       (list op type-tags))))))))
+
+
+;; Exercise 2.82: generalized apply-generic (multiple arguments)
+
+(define (apply-generic op . args)
+
+  (define (coerce type-tags args)
+    (let ((coerce-type (find-coerce-type type-tags type-tags)))
+      (if coerce-type
+          (map (lambda (x, y) (if (eq? coerce-type x)
+                                  y
+                                  ((get-coercion coerce-type x) y))) type-tags args)
+          #f)))
+
+  (define (find-coerce-type coercion-tags to-be-coerced-tags)
+    (if (null? coercion-tags)
+        #f
+        (let ((coercion-tag (car coercion-tags)))
+          (if (is-possible-to-coerce? coercion-tag to-be-coerced-tags)
+              coercion-tag
+              (find-coerce-type (cdr coercion-tags) to-be-coerced-tags)))))
+  
+  (define (is-possible-to-coerce? coercion-tag to-be-coerced-tags)
+    (if (null? to-be-coerced-tags)
+        #t
+        (let ((to-be-coerced-tag (car to-be-coerced-tags)))
+          (if (get-coercion coercion-tag to-be-coerced-tag)
+              (is-possible-to-coerce? coercion-tag (cdr to-be-coerced-tags))
+              #f))))
+
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+          (let ((coercion (coerce type-tags args)))
+            (if coercion
+                (apply-generic op coercion)
+                (error "No operation found for args -- APPLY-GENERIC" op args))))))))
+
+;; This might miss some inter type operations because it coerces everything to one single type
+;; For example: suppose there is an operation installed for '(scheme-number complex), it will be missed
