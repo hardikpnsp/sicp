@@ -134,3 +134,10 @@ trace:
 
 ;; This might miss some inter type operations because it coerces everything to one single type
 ;; For example: suppose there is an operation installed for '(scheme-number complex), it will be missed
+
+;; Exercise 2.83: raises
+
+(define (raise x) (apply-generic 'raise x)) 
+(put 'raise 'integer (lambda (x) (make-rational x 1))) 
+(put 'raise 'rational (lambda (x) (make-real (/ (numer x) (denom x)))))  
+(put 'raise 'real (lambda (x) (make-from-real-imag x 0))) 
