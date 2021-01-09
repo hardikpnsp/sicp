@@ -82,3 +82,22 @@
 
 (define (sub x y)
   (apply-generic 'add x (negate y)))
+
+
+;; Exercise 2.89: procedures for dense polynomial representation
+
+;; dense polynomials are representated as a list of coeff: (1 2 0 3 -2 -5)
+
+(define (first-term term-list)
+  (make-term (- (length term-list) 1)
+             (car term-list)))
+
+;; for adjoin we can only adjoin higher order terms
+
+(define (adjoin term term-list)
+  (if (> (order term) (order (first-term term-list)))
+      (cons (coeff term) term-list)
+      (error "can't adjoin lower order term")))
+
+;; everything else remains same as before but we will need different methods for arithmatic operations
+
