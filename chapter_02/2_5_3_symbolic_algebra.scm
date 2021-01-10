@@ -101,3 +101,34 @@
 
 ;; everything else remains same as before but we will need different methods for arithmatic operations
 
+;; Exercise 2.90: different methods for sparse and dense polynomials
+
+#| 
+
+we will need two more tags sparse and dense for term list
+we can store in the dispatch table as 'poly-sparse and 'poly-dense and define operation for each
+
+|#
+
+(define (install-poly-sparse-package)
+  ;; definations of sparse poly as above
+  (put 'add 'poly-sparse add)
+  (put 'mul 'poly-sparse mul)
+  (put 'adjoin-term 'poly-sparse adjoin-term)
+  (put 'first-term 'poly-sparse first-term)
+  ;; ...
+  )
+
+;; in similar manner we can install poly-dense-package 
+  
+#|
+
+Another approach can be to keep 'polynomial package as it is.
+but make term-list operations generic.
+
+we can have two packages sparse-term-list and dense-term-list
+and store different implementations for adjoin, first-term
+
+and define generic operation using apply-generic over sparse-term-list and dense-term-list
+
+|#
