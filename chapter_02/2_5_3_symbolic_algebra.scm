@@ -164,3 +164,6 @@ and define generic operation using apply-generic over sparse-term-list and dense
               (make-poly (variable p2)
                          (cadr result))))
       (error "poly not in same variable")))
+
+
+;; Exercise 2.92 - 2.97 : Incomplete
