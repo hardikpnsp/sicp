@@ -1,0 +1,25 @@
+#+title: Modularity, Objects and State
+#+date: 2021-01-11
+
+* 3.1 Assignment and Local State
+
+** 3.1.1 Local State Variables
+
+*** Exercise 3.1: Accumulator
+
+#+begin_src scheme :results value :session e1 :exports both
+
+  (define (make-accumulator val)
+      (define (add amount)
+        (begin (set! val (+ val amount))
+               val))
+      add)
+
+  (define A (make-accumulator 5))
+  (A 10)
+  (A 10)
+
+#+end_src
+
+#+RESULTS:
+: 25
