@@ -7,7 +7,7 @@
 
 *** Exercise 3.1: Accumulator
 
-#+begin_src scheme :results value :session e1 :exports both
+#+begin_src scheme :results value :exports both
 
   (define (make-accumulator val)
       (define (add amount)
@@ -23,3 +23,37 @@
 
 #+RESULTS:
 : 25
+
+*** Exercise 3.2: make-monitored
+
+#+BEGIN_SRC scheme :results output :exports both
+
+  (sqrt 10)
+
+  (define (make-monitored proc)
+    (let ((x 0))
+      (define (meta-proc input)
+        (if (eq? input 'how-many-calls?)
+            x
+            (begin (set! x (+ 1 x))
+                   (proc input)))
+        )
+      meta-proc))
+
+  (define s (make-monitored sqrt))
+  (displayln (s 10))
+  (displayln (s 'how-many-calls?))
+  (displayln (s 20))
+  (displayln (s 30))
+  (displayln (s 'how-many-calls?))
+  (displayln (s 100))
+
+#+END_SRC
+
+#+RESULTS:
+: 3.1622776601683795
+: 1
+: 4.47213595499958
+: 5.477225575051661
+: 3
+: 10
