@@ -5,6 +5,37 @@
 
 ** 3.1.1 Local State Variables
 
+/make-account/ maintains local state by using balance and set!
+
+#+BEGIN_SRC scheme exports:both
+
+  (define (make-account balance)
+    (define (withdraw amount)
+      (if (>= balance amount)
+          (begin (set! balance (- balance amount))
+                 balance)
+          "Insufficient funds"))
+    (define (deposit amount)
+      (set! balance (+ balance amount))
+      balance)
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) withdraw)
+            ((eq? m 'deposit) deposit)
+            (else (error "Unknown request -- MAKE-ACCOUNT"
+                         m))))
+    dispatch)
+
+  (define acc (make-account 100))
+  ((acc 'withdraw) 50)
+  ((acc 'withdraw) 60)
+  ((acc 'deposit) 40)
+  ((acc 'withdraw) 60)
+
+#+END_SRC
+
+#+RESULTS:
+: 30
+
 *** Exercise 3.1: Accumulator
 
 #+begin_src scheme :results value :exports both
@@ -57,3 +88,42 @@
 : 5.477225575051661
 : 3
 : 10
+*** Exercise 3.3: password protected make-account
+
+#+BEGIN_SRC scheme :results output :exports both 
+
+  (define (make-account balance password)
+    (define (withdraw amount)
+      (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+    (define (deposit amount)
+      (set! balance (+ balance amount))
+      balance)
+    (define (wrong-password amount)
+      "Incorrect Password")
+    (define (dispatch password-input operation)
+      (if (eq? password password-input)
+          (cond ((eq? operation 'withdraw) withdraw)
+                ((eq? operation 'deposit) deposit)
+                (else (error "Unknown requet -- MAKE-ACCOUNT"
+                             operation)))
+          wrong-password))
+    dispatch)
+
+  (define acc (make-account 100 'XD))
+
+  (displayln ((acc 'XD 'withdraw) 42))
+  (displayln ((acc 'DX 'withdraw) 3))
+  (displayln ((acc 'XD 'withdraw) 100))
+  (displayln ((acc 'XD 'deposit) 42))
+  (displayln ((acc 'XD 'withdraw) 100))  
+#+END_SRC
+
+#+RESULTS:
+: 58
+: Incorrect Password
+: Insufficient funds
+: 100
+: 0
