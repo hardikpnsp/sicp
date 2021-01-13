@@ -127,3 +127,66 @@
 : Insufficient funds
 : 100
 : 0
+
+*** Exercise 3.4: call-the-cops
+
+
+#+BEGIN_SRC scheme :results output :exports both 
+
+  (define (make-account balance password)
+    (let ((invalid-attempts 0)
+          (max-attempts 7))
+      (define (withdraw amount)
+        (if (>= balance amount)
+            (begin (set! balance (- balance amount))
+                   balance)
+            "Insufficient funds"))
+      (define (deposit amount)
+        (set! balance (+ balance amount))
+        balance)
+      (define (call-the-police)
+        (displayln "Dialing 911...")
+        (error "Too many false attempts"))
+      (define (wrong-password amount)
+        (set! invalid-attempts (+ invalid-attempts 1))
+        (if (> invalid-attempts max-attempts)
+            (call-the-police)
+            "Incorrect Password"))
+      (define (dispatch password-input operation)
+        (if (eq? password password-input)
+            (begin (set! invalid-attempts 0)
+                   (cond ((eq? operation 'withdraw) withdraw)
+                         ((eq? operation 'deposit) deposit)
+                         (else (error "Unknown requet -- MAKE-ACCOUNT"
+                                      operation))))
+            wrong-password))
+      dispatch))
+
+  (define acc (make-account 100 'XD))
+
+  (displayln ((acc 'XD 'withdraw) 1))
+  (displayln ((acc 'DX 'withdraw) 2))
+  (displayln ((acc 'DX 'withdraw) 3))
+  (displayln ((acc 'DX 'withdraw) 4))
+  (displayln ((acc 'DX 'withdraw) 5))
+  (displayln ((acc 'DX 'withdraw) 6))
+  (displayln ((acc 'DX 'withdraw) 7))
+  (displayln ((acc 'DX 'withdraw) 8))
+  (displayln ((acc 'DX 'withdraw) 9))
+  (displayln ((acc 'DX 'withdraw) 10))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+99
+Incorrect Password
+Incorrect Password
+Incorrect Password
+Incorrect Password
+Incorrect Password
+Incorrect Password
+Incorrect Password
+Dialing 911...
+Too many false attempts
+
+#+end_example
