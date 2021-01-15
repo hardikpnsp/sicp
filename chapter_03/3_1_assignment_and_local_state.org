@@ -4,7 +4,7 @@
 * 3.1 Assignment and Local State
 
 ** 3.1.1 Local State Variables
-
+   
 /make-account/ maintains local state by using balance and set!
 
 #+BEGIN_SRC scheme exports:both
@@ -190,3 +190,58 @@ Dialing 911...
 Too many false attempts
 
 #+end_example
+
+** 3.1.2 The Benefits of Introducing Assignment
+
++ Example:
+  - using /monte carlo/ method to estimate value of \pi
+  - 6 / \pi^{2} is the probability that two integers chosen at random will have no factors in common
+
+#+BEGIN_SRC scheme :results value :exports both :session e312
+ 
+  ;; random implementation for racket
+  (define (rand)
+    (random 10000))
+  (define (estimate-pi trials)
+    (sqrt (/ 6 (monte-carlo trials cesaro-test))))
+  (define (cesaro-test)
+    (= (gcd (rand) (rand)) 1))
+  (define (monte-carlo trials experiment)
+    (define (iter trials-remaining trials-passed)
+      (cond ((= trials-remaining 0)
+             (/ trials-passed trials))
+            ((experiment)
+             (iter (- trials-remaining 1) (+ trials-passed 1)))
+            (else
+             (iter (- trials-remaining 1) trials-passed))))
+    (iter trials 0))
+
+  (estimate-pi 100000)
+
+#+END_SRC
+
+#+RESULTS:
+: 3.1432142493875763
+
+*** Exercise 3.5: /Monte Carlo/ integrals
+
++ Using ~estimate-integral~ to produce an estimate of \pi by measuring the area of a unit circle.
+
+#+BEGIN_SRC scheme :results value :exports both :session e312
+  (define (square x)
+    (* x x))
+  (define (random-in-range low high)
+    (let ((range (- high low)))
+      (+ low (* (random) range))))
+  (define (inside-circle?)
+    (<= (+ (square (random-in-range -1.0 1.0))
+           (square (random-in-range -1.0 1.0)))
+        1))
+  (define (estimate-integral P x1 x2 y1 y2 trials)
+    (* (- x2 x1) (- y2 y1) (monte-carlo trials P)))
+  (estimate-integral inside-circle? -1.0 1.0 -1.0 1.0 1000000)
+
+#+END_SRC
+
+#+RESULTS:
+: 3.140784
