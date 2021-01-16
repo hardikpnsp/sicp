@@ -245,3 +245,40 @@ Too many false attempts
 
 #+RESULTS:
 : 3.140784
+
+*** Exercise 3.6: random number generator
+
+#+BEGIN_SRC scheme :results output :exports both
+
+  (define (rand-update x)
+    (remainder (+ (* x 31) 59) 119))
+  (define rand
+    (let ((cur-val 0))
+      (define (generate)
+        (set! cur-val (rand-update cur-val))
+        cur-val)
+      (define (reset new-val)
+        (set! cur-val new-val))
+      (define (dispatch op)
+        (cond ((eq? op 'generate)
+               (generate))
+              ((eq? op 'reset)
+               reset)
+              (else (error "Unsupported Operation -- RAND" op))))
+      dispatch))
+
+  (displayln (rand 'generate))
+  (displayln (rand 'generate))
+  ((rand 'reset) 42)
+  (displayln (rand 'generate))
+  (displayln (rand 'generate))
+  (displayln (rand 'generate))
+
+#+END_SRC
+
+#+RESULTS:
+: 59
+: 103
+: 52
+: 5
+: 95
