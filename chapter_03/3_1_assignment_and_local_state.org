@@ -282,3 +282,72 @@ Too many false attempts
 : 52
 : 5
 : 95
+** 3.1.3 The Cost of Introducing Assignments
+
+*** Exercise 3.7: joint account
+
+#+BEGIN_SRC scheme :results output :exports both 
+
+  (define (make-account balance password)
+    (let ((password-list (list password)))
+
+      (define (add-password password)
+        (set! password-list (cons password password-list)))
+      (define (check-password password)
+        (define (iter password-list)
+          (if (null? password-list)
+              #f
+              (if (eq? password (car password-list))
+                  #t
+                  (iter (cdr password-list)))))
+        (iter password-list))
+
+      (define (withdraw amount)
+        (if (>= balance amount)
+            (begin (set! balance (- balance amount))
+                   balance)
+            "Insufficient funds"))
+      (define (deposit amount)
+        (set! balance (+ balance amount))
+      balance)
+      (define (wrong-password amount)
+        "Incorrect Password")
+
+      (define (dispatch password-input operation)
+        (if (check-password password-input)
+            (cond ((eq? operation 'withdraw) withdraw)
+                  ((eq? operation 'deposit) deposit)
+                  ((eq? operation 'joint) add-password)
+                  (else (error "Unknown requet -- MAKE-ACCOUNT"
+                               operation)))
+            wrong-password))
+      dispatch))
+
+  (define peter-acc (make-account 100 'XD))
+
+  (displayln ((peter-acc 'XD 'withdraw) 10))
+
+  (define (make-joint account old-password new-password)
+    ((account old-password 'joint) new-password)
+    account)
+
+  (define paul-acc
+    (make-joint peter-acc 'XD 'DX))
+
+  (displayln ((paul-acc 'DX 'deposit) 1000))
+  (displayln ((paul-acc 'DX 'withdraw) 100))
+  (displayln ((peter-acc 'XD 'withdraw) 90))
+
+  (define thief-acc
+    (make-joint peter-acc 'DD 'XX))
+
+  (displayln ((thief-acc 'XX 'withdraw) 420)) 
+
+#+END_SRC
+
+#+RESULTS:
+: 90
+: 1090
+: 990
+: 900
+: Incorrect Password
