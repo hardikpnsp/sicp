@@ -351,3 +351,27 @@ Too many false attempts
 : 990
 : 900
 : Incorrect Password
+*** Exercuse 3.8: left to right or right to left
+
++ Defining a procedure f that changes the output of expression =(+ (f 0) (f 1))= depending on the order of evaluation
+
+#+BEGIN_SRC scheme :results output :exports both 
+
+  (define (mul-add)
+    (let ((val 100))
+      (define (proc x) 
+        (set! val (* val x))
+        val)
+      proc))
+
+  (define f (mul-add))
+  (displayln (+ (f 0) (f 1)))
+
+  (define f (mul-add))
+  (displayln (+ (f 1) (f 0)))
+
+#+END_SRC
+
+#+RESULTS:
+: 0
+: 100
