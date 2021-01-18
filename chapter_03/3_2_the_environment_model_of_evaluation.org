@@ -1,0 +1,97 @@
+#+title: The Environment Model of Evaluation
+#+date: 2021-01-18
+
+* 3.2.1 The Rules of Evaluation
+
++ Environemts
++ Frames
++ Bindings
+
++ A procedure object is applied to a set of arguments by constructing a frame, binding the formal parameters of the procedure to the arguments of the call, and then evaluating the body of the procedure in the context of the new environment constructed. The new frame has as its enclosing environment the environment part of the procedure object being applied.
++ A procedure is created by evaluating a lambda expression relative to a given environment. The resulting procedure object is a pair consisting of the text of the lambda expression and a pointer to the environment in which the procedure was created.
+
+* 3.2.2 Applying Simple Procedures
+
+** Exercise 3.9: environment structure for the procedures
+
+*** Recursive version
+
+#+BEGIN_SRC scheme
+
+  (define (factorial n)
+    (if (= n 1)
+        1
+        (* n (factorial (- n 1)))))
+
+#+END_SRC
+
+
+#+BEGIN_SRC
+
+                +-----------------------------------------------------------------------------------+
+                |                                                                                   |
+Global Env +--->+ factorial:                                                                        |
+                |                                                                                   |
+                |                                                                                   |
+                |                                                                                   |
+                +-----------+--------------------------+-------------------------------------+------+
+                            |                          |                                     |
+                            |                          |                                     |
+                     +------+------+            +------+------+                       +------+------+
+                     |             |            |             |                       |             |
+                E1   | n: 6        |       E2   | n: 5        |     .........    E6   | n: 1        |
+                     |             |            |             |                       |             |
+                     +-------------+            +-------------+                       +-------------+
+
+                      (if (= n 1)
+                          1
+                          (* n (factorial (- n 1)))))
+
+#+END_SRC
+
+*** Iterative version
+
+#+BEGIN_SRC scheme
+
+  (define (factorial n)
+    (fact-iter 1 1 n))
+  (define (fact-iter product counter max-count)
+    (if (> counter max-count)
+        product
+        (fact-iter (* counter product)
+                   (+ counter 1)
+                   max-count)))
+
+#+END_SRC
+
+#+BEGIN_SRC
+
+                +-----------------------------------------------------------------------------------+
+                |                                                                                   |
+Global Env +--->+ factorial:                                                                        |
+                |                                                                                   |
+                | fact-iter:                                                                        |
+                |                                                                                   |
+                +-----------+--------------------------+-------------------------------------+------+
+                            |                          |                                     |
+                            |                          |                                     |
+                     +------+------+            +------+-----------+                  +------+-----------+
+                     |             |            |                  |                  |                  |
+                E1   | n: 6        |       E2   | product: 1       |   ......    E8   | product: 720     |
+                     |             |            |                  |                  |                  |
+                     +-------------+            | counter: 1       |                  | counter: 7       |
+                                                |                  |                  |                  |
+                     (fact-iter 1 1 n)          | max-count: 6     |                  | max-count: 6     |
+                                                |                  |                  |                  |
+                                                |                  |                  |                  |
+                                                +------------------+                  +------------------+
+
+
+
+                                               (if (> counter max-count)
+                                                   product
+                                                   (fact-iter (* counter product)
+                                                              (+ counter 1)
+                                                              max-count))
+
+#+END_SRC
