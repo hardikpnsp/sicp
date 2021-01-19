@@ -95,3 +95,25 @@ Global Env +--->+ factorial:                                                    
                                                               max-count))
 
 #+END_SRC
+* 3.2.3 Frame as the Repository of Local State
+
+** Exercise 3.10: make-withdraw with explicit local state
+
+#+BEGIN_SRC scheme
+
+(define (make-withdraw initial-amount)
+  (let ((balance initial-amount))
+    (lambda (amount)
+      (if (>= balance amount)
+          (begin (set! balance (- balance amount))
+                 balance)
+          "Insufficient funds"))))
+
+(define W1 (make-withdraw 100))
+
+#+END_SRC
+
+#+CAPTION: Frame-Environment Diagram for the above make-withdraw procedure
+#+NAME:   fig:Exercise_3_10
+[[./Exercise_3_10.png]]
+
