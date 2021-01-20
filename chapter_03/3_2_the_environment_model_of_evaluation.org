@@ -1,4 +1,4 @@
-#+title: The Environment Model of Evaluation
+#+title: 3.2 The Environment Model of Evaluation
 #+date: 2021-01-18
 
 * 3.2.1 The Rules of Evaluation
@@ -117,3 +117,43 @@ Global Env +--->+ factorial:                                                    
 #+NAME:   fig:Exercise_3_10
 [[./Exercise_3_10.png]]
 
+* 3.2.4 Internal Definitions
+
+** Exercise 3.11: environment model for different make-account
+
+#+BEGIN_SRC scheme
+
+(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define (dispatch m)
+    (cond ((eq? m 'withdraw) withdraw)
+          ((eq? m 'deposit) deposit)
+          (else (error "Unknown request -- MAKE-ACCOUNT"
+                       m))))
+  dispatch)
+
+#+END_SRC
+
+#+BEGIN_SRC scheme
+
+  (define acc (make-account 50))
+
+  ((acc 'deposit) 40)
+
+  ((acc 'withdraw) 60)
+
+  (define acc2 (make-account 100))
+
+#+END_SRC
+
+[[./Exercise_3_11.png]]
+
++ Each method call like ~((acc 'deposit) 40)~ will spawn a new frame, it will have pointer to E1 and it will ~set!~ the balance variable there
++ Each new ~(define acc2 (make-account 100))~ will create a separate frame E2 and its account information will be completely separate
