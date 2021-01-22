@@ -57,3 +57,31 @@ w -> x
 ;;infinite loop
 
 #| as the name suggests, there is a cycle present: a -> b -> c -> a ... |#
+
+;; Exercise 3.14: mystery
+
+(define (mystery x)
+  (define (loop x y)
+    (if (null? x)
+        y
+        (let ((temp (cdr x)))
+          (set-cdr! x y)
+          (loop temp x))))
+  (loop x '()))
+
+;; the process reverses a list
+
+(mystery (list 1 2 3 4))
+;; (4 3 2 1)
+
+(define v (list 'a 'b 'c 'd))
+
+#| v -> a * -> b * -> c * -> d '() |#
+
+(define w (mystery v))
+
+(display w)
+;; (d c b a)
+
+(display v)
+;; (a)
