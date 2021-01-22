@@ -41,3 +41,19 @@ y -> |c||*| -> |d||'()|
 
 w -> x
 |# 
+
+;; Exercise 3.13: make-cycle
+
+(define (make-cycle x)
+  (set-cdr! (last-pair x) x)
+  x)
+
+(define z (make-cycle (list 'a 'b 'c)))
+
+(display z)
+;;infinite loop
+
+(last-pair z)
+;;infinite loop
+
+#| as the name suggests, there is a cycle present: a -> b -> c -> a ... |#
