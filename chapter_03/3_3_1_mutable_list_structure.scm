@@ -85,3 +85,47 @@ w -> x
 
 (display v)
 ;; (a)
+
+;; Exercies 3.15: set-to-wow!
+
+(define x (list 'a 'b))
+(define z1 (cons x x))
+
+(define z2 (cons (list 'a 'b) (list 'a 'b)))
+
+(define (set-to-wow! x)
+  (set-car! (car x) 'wow)
+  x)
+
+(display z1)
+(display z2)
+
+(set-to-wow! z1)
+;; ((wow b) wow b)
+
+(set-to-wow! z2)
+;; ((wow b) a b)
+
+#| 
+
+z1 -> * *
+      | |
+      a * -> b *
+
+z2 -> * * -> a * -> b *
+        |
+        ---> a * -> b *
+
+z1 -> * *
+      | |
+      wow * -> b *
+
+(a is replaced by wow)
+
+z2 -> * * -> wow * -> b *
+      |
+      -----> a * -> b *
+
+(only the car a of z2 was modified) 
+
+#| 
