@@ -227,6 +227,36 @@ z2 -> * * -> wow * -> b *
 (detect-cycle (list 'a 'b 'c))
 ;; #f
 
-(detect-cycle loop))
+(detect-cycle loop)
 ;; #t
 
+;; Exercise 3.19: cycle detection - constant space (turtle and hare)
+
+(define (detect-cycle x)
+  (define (turtle-hare turtle hare)
+    (if (eq? turtle hare)
+        #t
+        (if (or (not (pair? hare)) (not (pair? turtle)))
+            #f
+            (cond ((pair? (car hare))
+                   (or (turtle-hare (car turtle) (car (car hare)))
+                       (turtle-hare (car turtle) (cdr (car hare)))
+                       (turtle-hare (cdr turtle) (car (car hare)))
+                       (turtle-hare (car turtle) (cdr (car hare)))))
+                  ((pair? (cdr hare))
+                   (or (turtle-hare (car turtle) (car (cdr hare)))
+                       (turtle-hare (car turtle) (cdr (cdr hare)))
+                       (turtle-hare (cdr turtle) (car (cdr hare)))
+                       (turtle-hare (cdr turtle) (cdr (cdr hare)))))
+                  (else #f)))))
+  (if (pair? (car x))
+      (turtle-hare x (car x))
+      (if (pair? (cdr x))
+          (turtle-hare x (cdr x))
+          #f)))
+
+(detect-cycle (list 'a 'b 'c))
+;; #f
+
+(detect-cycle loop)
+;; #t 
