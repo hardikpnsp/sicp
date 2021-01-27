@@ -128,4 +128,45 @@ z2 -> * * -> wow * -> b *
 
 (only the car a of z2 was modified) 
 
+|#
+
+;; Exercise 3.16
+
+(define (count-pairs x)
+  (if (not (pair? x))
+      0
+      (+ (count-pairs (car x))
+         (count-pairs (cdr x))
+         1)))
+
 #| 
+
+ a * -> b * -> c '()
+
+|# 
+(count-pairs (list 'a 'b 'c))
+;; 3
+
+#|
+
+ a * -> * * -> c '()
+        |      ^
+        --------
+|#
+
+(define last-pair (cons 'c '()))
+(define c4 (cons 'a (cons last-pair last-pair)))
+(count-pairs c4)
+;; 4
+
+#|
+
+* * -> * * -> 'c '()
+|     ^|       ^
+------- -------
+|#
+
+(define last-last-pair (cons last-pair last-pair))
+(define c7 (cons last-last-pair last-last-pair))
+(count-pairs c7)
+;; 7
