@@ -260,3 +260,41 @@ z2 -> * * -> wow * -> b *
 
 (detect-cycle loop)
 ;; #t 
+
+;; Exercise 3.19 correction - cycle detection in a list with successive cdrs
+
+(define (cycle-detection x)
+  (define (iter turtle hare)
+    (if (and (pair? turtle) (pair? hare) (pair? (cdr hare)))
+        (if (eq? turtle hare)
+            #t
+            (iter (cdr turtle) (cdr (cdr hare))))
+        #f))
+  (if (pair? x)
+      (iter x (cdr x))
+      #f))
+
+(cycle-detection (list 'a 'b 'c))
+;; #f
+
+(define l (list 'a 'b 'c))
+
+(set-cdr! (cdr (cdr l)) l)
+
+(car l)
+;; a
+
+(car (cdr l))
+;; b
+
+(car (cdr (cdr l)))
+;; c
+
+(car (cdr (cdr (cdr l))))
+;; a -> cyce
+
+(car (cdr (cdr (cdr (cdr l)))))
+;; b -> cyce
+
+(cycle-detection l)
+;; #t
