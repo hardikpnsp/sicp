@@ -171,6 +171,11 @@ z2 -> * * -> wow * -> b *
 (count-pairs c7)
 ;; 7
 
+(define loop (cons 'a 'a))
+(set-car! loop loop)
+;; (count-pairs (cons 'b (cons 'c loop)))
+;; infinite loop
+
 ;; Exercise 3.17: correct count-pairs
 
 (define (count-pairs x)
@@ -200,4 +205,28 @@ z2 -> * * -> wow * -> b *
 
 (count-pairs c7)
 ;; 3
+
+;; Exercise 3.18: cycle detection
+
+(define (detect-cycle x)
+  (define (is-not-visited p visited)
+    (if (null? visited)
+        #t
+        (if (eq? p (car visited))
+            #f
+            (is-not-visited p (cdr visited)))))
+  (define (detect-cycle-iter p visited)
+    (if (not (pair? p))
+        #f
+        (if (is-not-visited p visited)
+            (or (detect-cycle-iter (car p) (cons p visited))
+                (detect-cycle-iter (cdr p) (cons p visited)))
+            #t)))
+  (detect-cycle-iter x '()))
+
+(detect-cycle (list 'a 'b 'c))
+;; #f
+
+(detect-cycle loop))
+;; #t
 
