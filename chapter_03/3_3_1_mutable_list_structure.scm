@@ -170,3 +170,34 @@ z2 -> * * -> wow * -> b *
 (define c7 (cons last-last-pair last-last-pair))
 (count-pairs c7)
 ;; 7
+
+;; Exercise 3.17: correct count-pairs
+
+(define (count-pairs x)
+  (define (is-not-visited p visited)
+    (if (null? visited)
+        #t
+        (if (eq? p (car visited))
+            #f
+            (is-not-visited p (cdr visited)))))
+  (let ((visited '()))
+    (define (count-pairs-iter p)
+      (if (not (pair? p))
+          0
+          (if (is-not-visited p visited)
+              (begin (set! visited (cons p visited))
+                     (+ (count-pairs-iter (car p))
+                        (count-pairs-iter (cdr p))
+                        1))
+              0)))
+    (count-pairs-iter x)))
+  
+(count-pairs (list 'a 'b 'c))
+;; 3
+
+(count-pairs c4)
+;; 3
+
+(count-pairs c7)
+;; 3
+
