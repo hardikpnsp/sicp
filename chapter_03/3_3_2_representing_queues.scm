@@ -128,3 +128,117 @@ if we add something else -> it will go through the empty-queue? flow in insert-q
 ;; (b c)
 (q 'get)
 ;; (b c)
+
+
+
+;; Exercise 3.23: deque
+
+#|
+representation of a single element: (val *) -> (prev next)
+representation: (cons value (cons prev-ptr next-ptr))
+|#
+
+(define x (cons 'a (cons 'b 'c)))
+
+(set-car! (cdr x) 'd)
+
+(display x)
+
+(define (make-deque)
+  (let ((front-ptr '())
+        (rear-ptr '()))
+    (define (empty-deque?)
+      (null? front-ptr))
+
+    (define (set-fp value)
+      (set! front-ptr value))
+
+    (define (set-rp value)
+      (set! rear-ptr value))
+
+    (define (make-element value prev next)
+      (cons value (cons prev next)))
+    
+    (define (front-insert-deque! value)
+      (cond ((empty-deque?)
+             (let ((element (make-element value '() '())))
+               (set-rp element)
+               (set-fp element)))
+            (else
+             (let ((element (make-element value '() front-ptr)))
+               (set-car! (cdr front-ptr) element)
+               (set-fp element)))))
+
+    (define (rear-insert-deque! value)
+      (cond ((empty-deque?)
+             (let ((element (make-element value '() '())))
+               (set-rp element)
+               (set-fp element)))
+            (else
+             (let ((element (make-element value rear-ptr '())))
+               (set-cdr! (cdr rear-ptr) element)
+               (set-rp element)))))
+
+    (define (prev element)
+      (car (cdr element)))
+    
+    (define (rear-delete-deque!)
+      (cond ((empty-deque?)
+             (error "DELETE from empty deque"))
+            ((null? (prev rear-ptr))
+             (set-rp '())
+             (set-fp '()))
+            (else
+             (set-rp (car (cdr rear-ptr)))
+             (set-cdr! (cdr rear-ptr) '()))))
+
+    (define (next element)
+      (cdr (cdr element)))
+
+    (define (front-delete-deque!)
+      (cond ((empty-deque?)
+             (error "DELETE from empty deque"))
+            ((null? (next front-ptr))
+             (set-rp '())
+             (set-fp '()))
+            (else
+             (set-fp (cdr (cdr front-ptr)))
+             (set-car! (cdr front-ptr) '()))))
+    
+    (define (dispatch m)
+      (cond ((eq? m 'empty-deque?)
+             (empty-deque?))
+            ((eq? m 'front-insert-deque!)
+             front-insert-deque!)
+            ((eq? m 'front-deque)
+             front-ptr)
+            ((eq? m 'rear-deque)
+             rear-ptr)
+            ((eq? m 'rear-insert-deque!)
+             rear-insert-deque!)
+            ((eq? m 'rear-delete-deque!)
+             (rear-delete-deque!))
+            ((eq? m 'front-delete-deque!)
+             (front-delete-deque!))
+            (else (error "NOT SUPPORTED --DISPATCH" m))))
+    dispatch))
+
+(define dq (make-deque))
+
+(dq 'empty-deque?)
+
+((dq 'front-insert-deque!) 'b)
+
+(dq 'front-deque)
+
+((dq 'front-insert-deque!) 'a)
+
+(dq 'rear-deque)
+
+((dq 'rear-insert-deque!) 'c)
+
+((dq 'rear-insert-deque!) 'd)
+
+(dq 'rear-delete-deque!)
+
+(dq 'front-delete-deque!)
