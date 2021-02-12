@@ -111,3 +111,57 @@
 (lookup (list 'foo 'foo) t)
 
 (lookup (list 'f 'f 'f) t)
+
+;; 3.26 binary tree table
+
+#| 
+
+each record will have ((key value) left-child right-child) 
+
+|#
+
+(define (make-tree key-val left right) 
+   (list key-val left right)) 
+
+(define (adjoin-set x set) 
+   (cond ((null? set) (make-tree x '() '())) 
+         ((= (car x) (car (car set))) set) 
+         ((< (car x) (car (car set))) 
+          (make-tree (car set) 
+                     (adjoin-set x (cadr set)) 
+                     (caddr set))) 
+         ((> (car x) (car (car set))) 
+          (make-tree (car set) 
+                     (cadr set) 
+                     (adjoin-set x (caddr set)))))) 
+
+(define (make-binary-table) 
+   (let ((local-table '())) 
+     
+     (define (lookup key records) 
+       (cond ((null? records) #f) 
+             ((= key (car (car records))) (car records)) 
+             ((< key (car (car records))) (lookup key (cadr records))) 
+             (else (lookup key (caddr records))))) 
+      
+     (define (insert! key value) 
+       (let ((record (lookup key local-table))) 
+         (if record 
+             (set-cdr! record value) 
+             (set! local-table (adjoin-set (cons key value) local-table))))) 
+     
+     (define (get key) 
+       (lookup key local-table)) 
+     
+     (define (dispatch m) 
+       (cond ((eq? m 'get) get) 
+             ((eq? m 'insert!) insert!) 
+             ((eq? m 'print) local-table) 
+             (else (error "Undefined operation -- BINARY-TABLE" m)))) 
+     dispatch)) 
+
+(define bt (make-binary-table))
+((bt 'insert!) 1 'a)
+((bt 'insert!) 0 'b)
+((bt 'insert!) 2 'c)
+(bt 'print)
