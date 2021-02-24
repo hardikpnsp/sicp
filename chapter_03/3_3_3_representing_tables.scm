@@ -165,3 +165,50 @@ each record will have ((key value) left-child right-child)
 ((bt 'insert!) 0 'b)
 ((bt 'insert!) 2 'c)
 (bt 'print)
+
+
+;; Exercise 3.27: Memoization
+
+(define (fib n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (else (+ (fib (- n 1))
+                 (fib (- n 2))))))
+
+(define memo-fib
+  (memoize (lambda (n)
+             (cond ((= n 0) 0)
+                   ((= n 1) 1)
+                   (else (+ (memo-fib (- n 1))
+                            (memo-fib (- n 2))))))))
+
+(define (memoize f)
+  (let ((table (make-table)))
+    (lambda (x)
+      (let ((previously-computed-result (lookup x table)))
+        (or previously-computed-result
+            (let ((result (f x)))
+              (insert! x result table)
+              result))))))
+
+#| 
+memo-fib computes nth Fibonacci number in number of steps proportional to n.
+
+(mem-fib n) = (mem-fib n - 1) + (mem-fib n - 2)
+
+using memoization it always remembers the last two digits thus this operation becomes O(1)
+
+and to find mem-fib N we have to go through all n numbers once, thus O(n)
+
+|#
+
+(define memo-fib
+  (memoize fib))
+         
+#|
+
+This does not work as we need to call memo-fib inside fib in order to take advantage of memoization
+
+|#
+
+
