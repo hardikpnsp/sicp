@@ -33,3 +33,42 @@
 2x (delay AND) + 2x (delay NOT)
 
 |#
+
+;; Exercise 3.30: ripple-carry adder delay
+
+(define (ripple-carry-adder ak bk sk c)
+  (define (iter a b s c-out)
+    (let ((ai (car a))
+          (bi (car b))
+          (si (car si)))
+      (if (null? ai)
+          (set-signal! c-out 0)
+          (let ((c-in (make-wire)))
+            (full-adder ai bi c-in si c-out)
+            (iter (cdr a) (cdr b) (cdr s) c-in)))))
+  (iter ak bk sk c))
+
+(define (full-adder a b c-in s c-out)
+  (let ((x (make-wire))
+        (y (make-wire))
+        (z (make-wire)))
+    (half-adder b c-in x y)
+    (half-adder a x s z)
+    (or-gate z y c-out)))
+      
+
+#|
+
+If we have N full adders in series, then 
+
+delay of ripple-carry = N * delay of full adder
+                      = N * (2 * delay of half adder + delay of or-gate)
+                      = N * (2 * (delay of or-gate or delay (not-gate + and-gate) which ever is more) + delay of or-gate)
+
+(* N
+   (+ (* 2
+         (max or-gate-delay
+              (+ inverter-delay and-gate-delay)))
+      or-gate-delay))
+      
+|#          
