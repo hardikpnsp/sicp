@@ -72,3 +72,22 @@ delay of ripple-carry = N * delay of full adder
       or-gate-delay))
       
 |#          
+
+;; Exercise 3.31: no proc initialization in accept-action-procedure!
+
+#|
+
+We initialize the proc on registration to get the signals propogated in initial configuration.
+for example: if we have initially 0 -> inverter should have 1 at the start on when first set-signal! occures
+
+In case of half-adder (A B S C)  without initialization: 
+
+- Truth table
+
+A B S C no proc S C
+0 0 0 0         0 0
+0 1 1 0         0 0
+1 0 1 0         0 0
+1 1 0 1         0 0
+
+|# 
