@@ -91,3 +91,25 @@ A B S C no proc S C
 1 1 0 1         0 0
 
 |# 
+
+;; Exercise 3.32: fifo behaviour of the agenda segment queue
+
+#| and-gate 
+
+each input wire (a1 and a2) of and gate has add-action! which calls (after-delay and-gate-delay (lambda () (set-signal! output new-value)))
+
+let's take the following scenario:
+
+at time 1 -> a1 = 1, a2 = 0
+
+at time 2 -> a1 = 0, a2 = 1
+
+if a2 = 1 set-signal came first, this will trigger (lambda () (set-signal! output 1)) after and-gate-delay
+
+then a1 = 0 will trigger (lambda () (set-signal! output 0)) after and-gate-delay
+
+accepted answer => output = 0
+
+if lifo -> output = 1 is the final answer which is wrong
+
+|#
