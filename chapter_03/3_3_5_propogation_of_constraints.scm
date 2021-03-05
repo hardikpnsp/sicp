@@ -225,3 +225,43 @@ The issue here is that if b is known, we can't find a as both a will be un-set
 
 (set-value! a 10 'user)
 
+;; Exercise 3.37: celsius-fahrenheit-converter (non-cumbersome version)
+
+(define (celsius-fahrenheit-converter x)
+  (c+ (c* (c/ (cv 9) (cv 5))
+          x)
+      (cv 32)))
+
+(define (c+ x y)
+  (let ((z (make-connector)))
+    (adder x y z)
+    z))
+
+(define (c* x y)
+  (let ((z (make-connector)))
+    (multiplier x y z)
+    z))
+
+(define (c/ x y)
+  (let ((z (make-connector)))
+    (multiplier y z x)
+    z))
+
+(define (cv x)
+  (let ((z (make-connector)))
+    (constant x z)
+    z))
+
+(define C (make-connector))
+(define F (celsius-fahrenheit-converter C))
+
+(probe "C" C)
+(probe "F" F)
+
+(set-value! F 32 'user)
+;; C 0
+
+(forget-value! F 'user)
+
+(set-value! C 0 'user)
+;; F 0
