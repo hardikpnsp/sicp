@@ -176,3 +176,12 @@
 (set-value! a 10 'user)
 (set-value! b 20 'user)
 ;; we get c = 15
+
+;; Exercise 3.34: fault in squarer
+
+(define (squarer a b)
+  (multiplier a a b))
+
+#| 
+The issue here is that if b is known, we can't find a as both a will be un-set
+|#
