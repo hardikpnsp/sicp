@@ -170,3 +170,47 @@ A1 A2 A3
 Here both Deposit and Withdraw happen in an interleaved manner and A2 is set to 0 -> $10 deposit are lost
 
 |#
+
+
+;; Exercise 3.44: Transfer
+
+(define (transfer from-account to-account amount)
+  ((from-account 'withdraw) amount)
+  ((to-account 'deposit) amount))
+
+#| 
+If we have deposit and withdraw serialized, we can use this transfer method as the sum in the system remains same
+We do not need fancy solution like we did above for exchange as here, we don't need to keep account balances limited to set 10, 20, 30
+Transfer system can have account balance 40, 10, 10. Louis is wrong.
+|#
+
+
+;; Exercise 3.45: Louis's "Simple" bank account system
+
+(define (make-account-and-serializer balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((balance-serializer (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) (balance-serializer withdraw))
+            ((eq? m 'deposit) (balance-serializer deposit))
+            ((eq? m 'balance) balance)
+            ((eq? m 'serializer) balance-serializer)
+            (else (error "Unknown request -- MAKE-ACCOUNT"
+                         m))))
+    dispatch))
+
+#| 
+
+If we have exchange in the same serialize set as deposit or withdraw,
+we won't be able to call the deposit method within exchange method.
+Thus, serialized-exchange method will never be executed
+
+|#
+
