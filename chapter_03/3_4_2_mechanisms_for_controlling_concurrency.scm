@@ -214,3 +214,64 @@ Thus, serialized-exchange method will never be executed
 
 |#
 
+;; Exercise 3.46: timing diagram for test-and-set!
+
+#|
+
+following shocases timing diagram (horizontal) of two processes being able to acquire mutex because no atomicity in the test-and-set! procedure
+
+mutex 'acquire -> if (car cell) -> set-car! cell true --
+                           |                           |
+cell: (false) -------------                           (true)  (true)
+                           |                                   |
+mutex 'acquire -> if (car cell) ----------> set-car! cell true--
+
+|#
+
+;; Exercise 3.47: A semaphore of size n
+
+;; a. In term of mutexes
+
+(define (make-semaphore n)
+  (let ((mutex (make-mutex))
+        (total 0))
+    (define (semaphore m)
+      (cond ((eq? m 'acquire)
+             (mutex 'acquire)
+             (if (< total n)
+                 (begin (set! total (+ total 1))
+                        (mutex 'release))
+                 (begin (mutex 'release)
+                        (semaphore 'acquire))))
+            ((eq? m 'release)
+             (mutex 'accure)
+             (if (total > 0)
+                 (set! total (- total 1)))
+             (mutex 'release))))
+    semaphore))
+
+;; b. In term of atomic test-and-set!
+
+(define (make-semaphore n)
+  (let ((cell (list false))
+        (total 0))            
+    (define (the-semaphore m)
+      (cond ((eq? m 'acquire)
+             (if (test-and-set! cell)
+                 (the-semaphore 'acquire) ;retry
+                 (if (< total n)
+                     (begin (set! total (+ 1 total))
+                            (clear! cell)))))
+            ((eq? m 'release)
+             (if (> total 0)
+                 (set! total (- total 1)))
+             (clear! cell))))
+    the-semaphore))
+(define (clear! cell)
+  (set-car! cell false))
+
+(define (test-and-set! cell)
+  (if (car cell)
+      true
+      (begin (set-car! cell true)
+             false)))
