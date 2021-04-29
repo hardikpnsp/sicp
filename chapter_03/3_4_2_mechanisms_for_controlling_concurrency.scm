@@ -275,3 +275,36 @@ mutex 'acquire -> if (car cell) ----------> set-car! cell true--
       true
       (begin (set-car! cell true)
              false)))
+
+
+;; Exercise 3.48: Deadlock-avoidance by smaller digit first
+
+#|
+
+In this mehod, both the processes will always try to grab lock on smaller "digit" account first
+
+process1: a1 -> a2
+process2: a2 -> a1
+
+these two processes can result in deadlock when process1 has lock on a1 and process2 on a2 but both process need locks on both resources in order to complete
+
+when we follow smaller "digit" first stratege (or any specific order) 
+
+process1: a1 -> a2
+process2: a1 -> a2
+
+each process will try to grab lock on a1 first, if lock on a1 is not available than a2 is not attempted. Won't be resulting in deadlock.
+
+|#
+
+
+(define (serialized-exchange account1 account2)
+  (let ((serializer1 (account1 'serializer))
+        (serializer2 (account2 'serializer)))
+    (if (< (account1 'id) (account2 'id))
+        ((serializer1 (serializer2 exchange))
+         account1
+         account2)
+        ((serializer2 (serializer1 exchange))
+         account1
+         account2))))
