@@ -308,3 +308,22 @@ each process will try to grab lock on a1 first, if lock on a1 is not available t
         ((serializer2 (serializer1 exchange))
          account1
          account2))))
+
+;; Exercise 3.49: scenario where above strategy doesn't work
+
+#| a far fetched idea,
+memory pointer exchange: A B C are memory location pointing to other memory locations
+A -> B
+B -> A
+C
+
+Task 1: We want whatever location A points to (currently B) to point to C... (B -> C)
+Parallely
+Task 2: We want whatever location B points to (currently A) to point to C... (A -> C)
+
+Here Task 2 gets a lock on B to read where it points (We don't want any writes to memory location when someone else is reading) 
+and Task 1 gets a lock on on A... 
+
+-> Deadlock
+
+|#
