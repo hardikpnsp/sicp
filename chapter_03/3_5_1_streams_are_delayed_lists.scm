@@ -40,3 +40,40 @@
 ;; 6 7
 ;; stream is already evaluated till 5 so no show calls till that
 ;; 6 and 7 are not evaluated -> show is called on them
+
+;; Exercise 3.52: what's the value of sum
+
+(define sum 0)
+;;0
+
+(define (accum x)
+  (set! sum (+ x sum))
+  sum)
+(display sum)
+;;0
+
+(define seq (stream-map accum (stream-enumerate-interval 1 20)))
+(display sum)
+;;1
+
+(define y (stream-filter even? seq))
+(display sum)
+;;6
+
+(define z (stream-filter (lambda (x) (= (remainder x 5) 0))
+                         seq))
+(display sum)
+;;10
+
+(stream-ref y 7)
+(display sum)
+;;136
+
+(display-stream z)
+(display sum)
+;;210
+
+#| 
+The responses will definitely be different if (delay <exp>) is implemented without memo-proc.
+the stream will be re-evaluated at every stream-ref and display-stream resulting in sum value increasing everytime.
+|#
