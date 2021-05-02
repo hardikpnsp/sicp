@@ -71,4 +71,22 @@ additions   : 0, 1, (+ 0 1), (+ 1 (+ 0 1)), (+ (+ 0 1) (+ 1 (+ 0 1))),
 Nth term will require at least fib(n) additions, which is exponential
 |#
 
+;; Exercise 3.58: explain
+
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den) den radix)))
+
+#|
+
+(expand 1 7 10)
+
+1, 4, 2, 8, 5, (expand 5 7 10)...
+
+(expand 3 8 10)
+
+3, 7, 5, 0, 0, 0, 0, 0, ...
+
+|#
 
