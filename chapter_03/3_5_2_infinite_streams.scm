@@ -52,3 +52,23 @@
   (stream-map (lambda (x) (* x factor)) stream))
 
 (define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
+
+;; Exercise 3.57: number of additions nth Fibonacci based on add-streams procedures
+
+(define fibs
+  (cons-stream 0
+               (cons-stream 1
+                            (add-streams (stream-cdr fibs)
+                                         fibs))))
+
+#|
+without the memo-proc optimization
+
+fib stream (without the memo-proc optimization):
+
+additions   : 0, 1, (+ 0 1), (+ 1 (+ 0 1)), (+ (+ 0 1) (+ 1 (+ 0 1))),
+
+Nth term will require at least fib(n) additions, which is exponential
+|#
+
+
