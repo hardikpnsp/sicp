@@ -90,3 +90,24 @@ Nth term will require at least fib(n) additions, which is exponential
 
 |#
 
+;; Exercise 3.59:
+
+;; a: integrate-series
+
+(define (integrate-series s)
+  (mul-stream s (stream-map (lambda (x) (/ 1 x)) integers)))
+
+;; b: e^x
+
+(define exp-series
+  (cons-stream 1 (integrate-series exp-series)))
+
+(stream-ref exp-series 5)
+;; 1/120
+
+(define cosine-series
+  (cons-stream 1 (stream-map - (integrate-series sine-series))))
+
+(define sine-series
+  (cons-stream 0 (integrate-series cosine-series)))
+
