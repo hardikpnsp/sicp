@@ -21,3 +21,12 @@
 (define factorials (cons-stream 1 (mul-stream factorials
                                               integers)))
 
+;; Exercise 3.55: paritla-sum
+
+(define (partial-sum s)
+  (define partial-sum-stream (cons-stream (stream-car s)
+                                          (add-stream (stream-cdr s)
+                                                      partial-sum-stream)))
+  partial-sum-stream)
+
+(define int-sum (partial-sum integers))
