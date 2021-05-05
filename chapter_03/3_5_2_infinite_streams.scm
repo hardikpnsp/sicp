@@ -137,5 +137,19 @@ Nth term will require at least fib(n) additions, which is exponential
 
 (define sec-series (invert-unit-series cosine-series))
 
-(stream-ref sec-series 4)
+(stream-ref sec-series 6)
 ;; 5/24
+
+;; Exercise 3.62: div-series
+
+(define (div-series numerator denominator)
+  (if (= (stream-car denominator) 0)
+      (error "Denominator stream has zero as constant term")
+      (mul-series numerator (invert-unit-series denominator))))
+
+(define tangent-series (div-series sine-series cosine-series))
+
+(stream-ref tangent-series 5)
+;; 2/15
+
+
