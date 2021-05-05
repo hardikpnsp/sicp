@@ -106,8 +106,25 @@ Nth term will require at least fib(n) additions, which is exponential
 ;; 1/120
 
 (define cosine-series
-  (cons-stream 1 (stream-map - (integrate-series sine-series))))
+  (cons-stream 1 (stream-map -
+                             (integrate-series sine-series))))
 
 (define sine-series
   (cons-stream 0 (integrate-series cosine-series)))
 
+;; Exercise 3.60:
+
+(define (mul-series s1 s2)
+  (cons-stream (* (stream-car s1) (stream-car s2))
+               (add-stream (scale-stream (stream-cdr s2) (stream-car s1))
+                           (mul-series (stream-cdr s1) s2))))
+
+
+(define one (add-stream (mul-series sine-series sine-series)
+                        (mul-series cosine-series cosine-series)))
+
+(stream-ref one 0)
+;; 1
+
+(stream-ref one 1)
+;; 0 ... and so on
