@@ -128,3 +128,14 @@ Nth term will require at least fib(n) additions, which is exponential
 
 (stream-ref one 1)
 ;; 0 ... and so on
+
+;; Exercise 3.61: invert-unit-series
+
+(define (invert-unit-series s)
+  (define X (cons-stream 1 (stream-map - (mul-series (stream-cdr s) X))))
+  X)
+
+(define sec-series (invert-unit-series cosine-series))
+
+(stream-ref sec-series 4)
+;; 5/24
