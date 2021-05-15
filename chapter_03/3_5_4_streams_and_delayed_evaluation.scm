@@ -90,6 +90,48 @@
 (stream-ref (solve-2nd-gen (lambda (dy y) (+ (* dy 1) (* y 0))) 0.001 1 1) 1000)
 ;; 2.7169
 
+;; Exercise 3.80: RLC circuit
 
+(define (RLC R L C dt)
+  (define (generate-stream-pair vc0 il0)
+    (define vc (integral (delay dvc) vc0 dt))
+    (define il (integral (delay dil) il0 dt))
+    (define dvc (scale-stream il (- (/ 1 C))))
+    (define dil (add-stream (scale-stream vc (/ 1 L))
+                            (scale-stream il (- (/ R L)))))
+    (cons vc il))
+  generate-stream-pair)
+
+(define stream-pair ((RLC 1 0.2 1 0.1) 0 10))
+(define vc-stream (car stream-pair))
+(define il-stream (cdr stream-pair))
+
+(display-stream vc-stream 0 10)
+#|
+0
+-1.
+-1.5
+-1.7
+-1.7249999999999999
+-1.6524999999999999
+-1.5299999999999998
+-1.3861249999999998
+-1.2376874999999998
+-1.0941625
+|#
+
+(display-stream il-stream 0 10)
+#|
+10
+5.
+2.
+.25
+-.7250000000000001
+-1.225
+-1.43875
+-1.4843749999999998
+-1.4352499999999997
+-1.3364687499999997
+|#
 
 
