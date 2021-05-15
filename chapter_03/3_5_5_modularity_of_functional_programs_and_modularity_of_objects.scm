@@ -38,6 +38,8 @@
   (stream-map (lambda (p) (sqrt (/ 6 p)))
               (monte-carlo cesaro-stream 0 0)))
 
+(stream-ref pi 1000)
+
 ;; Exercise 3.81: random number generator stream input
 
 (define (rand-gen requests)
@@ -74,3 +76,24 @@
 (display-stream rand-stream 0 5)
 
 
+;; Exercise 3.82: monte-carlo integration
+
+(define (random-in-range low high) 
+  (let ((range (- high low))) 
+    (+ low (random range)))) 
+
+(define (random-number-pairs low1 high1 low2 high2) 
+  (cons-stream (cons (random-in-range low1 high1) (random-in-range low2 high2)) 
+               (random-number-pairs low1 high1 low2 high2))) 
+
+(define (estimate-integral p x1 x2 y1 y2) 
+  (let ((area (* (- x2 x1) (- y2 y1))) 
+        (randoms (random-number-pairs x1 x2 y1 y2))) 
+    (scale-stream (monte-carlo (stream-map p randoms) 0 0) area))) 
+
+(define (sum-of-square x y) (+ (* x x) (* y y))) 
+(define f (lambda (x) (not (> (sum-of-square (- (car x) 1) (- (cdr x) 1)) 1)))) 
+(define pi-stream (estimate-integral f 0.0 2.0 0.0 2.0))
+
+(stream-ref pi-stream 1000)
+;; 3.19...
