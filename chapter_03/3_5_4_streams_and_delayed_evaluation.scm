@@ -5,6 +5,9 @@
 (define (add-stream s1 s2)
   (stream-map + s1 s2))
 
+(define (scale-stream stream factor)
+  (stream-map (lambda (x) (* x factor)) stream))
+
 (define ones (cons-stream 1 ones))
 
 (define integers (cons-stream 1 (add-stream ones integers)))
@@ -12,8 +15,8 @@
 (define (integral integrand initial-value dt)
   (define int
     (cons-stream initial-value
-                 (add-streams (scale-stream integrand dt)
-                              int)))
+                 (add-stream (scale-stream integrand dt)
+                             int)))
   int)
 
 (define int-int (integral ones 1 0.1))
@@ -30,8 +33,8 @@
   (define int
     (cons-stream initial-value
                  (let ((integrand (force delayed-integrand)))
-                   (add-streams (scale-stream integrand dt)
-                                int))))
+                   (add-stream (scale-stream integrand dt)
+                               int))))
   int)
 
 ;; dy/dt = f(y)
@@ -63,4 +66,16 @@
 
 (stream-ref (solve (lambda (y) y) 1 0.001) 1000)
 ;; 2.716923...
+
+;; Exercise 3.78: 2nd order linear differential equation
+
+(define (solve-2nd a b dt y0 dy0)
+  (define y (integral (delay dy) y0 dt))
+  (define dy (integral (delay ddy) dy0 dt))
+  (define ddy (add-stream (scale-stream dy a)
+                          (scale-stream y b)))
+  y)
+
+(stream-ref (solve-2nd 1 0 0.001 1 1) 1000)
+;; 2.7169...
 
