@@ -79,3 +79,17 @@
 (stream-ref (solve-2nd 1 0 0.001 1 1) 1000)
 ;; 2.7169...
 
+;; Exercise 3.79: solve-2nd generalization
+
+(define (solve-2nd-gen f dt y0 dy0)
+  (define y (integral (delay dy) y0 dt))
+  (define dy (integral (delay ddy) dy0 dt))
+  (define ddy (stream-map f dy y))
+  y)
+
+(stream-ref (solve-2nd-gen (lambda (dy y) (+ (* dy 1) (* y 0))) 0.001 1 1) 1000)
+;; 2.7169
+
+
+
+
