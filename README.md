@@ -11,3 +11,9 @@ In this repo I write solutions and comments for the exercises given in the book 
 - Every exercise till chapter 2 is written in `.scm` files
 - I have used [MIT Scheme](https://www.gnu.org/software/mit-scheme/) as a lisp dialect and [emacs](https://www.gnu.org/software/emacs/) as an editor
 - I found this article - [Don't Panic!](https://groups.csail.mit.edu/mac/users/gjs/6.945/dont-panic/) - really helpful for initial setup
+
+### Chapter 3
+
+- I started off using orgmode for better rendering support on github but soon gave up on it as it increased overhead and I would rather just focus on solving exercises rather than make them look good
+- went back to `.scm` files
+- files names and exercises are organized according to subtopics
